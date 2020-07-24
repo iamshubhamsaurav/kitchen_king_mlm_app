@@ -1,4 +1,4 @@
-package com.example.membership_app
+package com.soloprogrammer.kitchenkingmlm
 
 import io.flutter.embedding.android.FlutterActivity
 
