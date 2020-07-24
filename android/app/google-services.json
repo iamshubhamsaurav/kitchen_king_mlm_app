@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "306769537296",
+    "firebase_url": "https://kitchenkingmlm-60747.firebaseio.com",
+    "project_id": "kitchenkingmlm-60747",
+    "storage_bucket": "kitchenkingmlm-60747.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:306769537296:android:962f69c13a34e1c42f9d95",
+        "android_client_info": {
+          "package_name": "com.soloprogrammer.kitchenkingmlm"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "306769537296-2ue4cd80uoiaafc5fg21ofgiep9mpqul.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAs1tWBgVDz7a6CPsJqm4LhVFvjK8M8f8w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "306769537296-2ue4cd80uoiaafc5fg21ofgiep9mpqul.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
