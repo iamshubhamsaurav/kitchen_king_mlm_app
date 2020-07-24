@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AddMemberPage extends StatefulWidget {
   @override
@@ -60,8 +61,8 @@ class AddMemberFormState extends State<AddMemberForm> {
 
   final _spacingSizedBox = SizedBox(height: 12);
 
-  DateTime _joiningDate;
-  DateTime _dateOfBirth;
+  DateTime _joiningDate = DateTime.now();
+  DateTime _dateOfBirth = DateTime(2000);
 
   var _genders = ['Male', 'Female', 'Others'];
   var _maritalStatus = ['Single', 'Married', 'Divorced', 'Widowed'];
@@ -100,6 +101,49 @@ class AddMemberFormState extends State<AddMemberForm> {
     );
   }
 
+  // All the fields Controller
+  final salesmanCodeFieldController = TextEditingController();
+  final salesmanNameFieldController = TextEditingController();
+  final salesmanMobileNoFieldController = TextEditingController();
+  final applicantNameFieldController = TextEditingController();
+  final fatherHusbandNameFieldController = TextEditingController();
+  final addressFieldController = TextEditingController();
+  final mobileNoFieldController = TextEditingController();
+  final nomineeNameFieldController = TextEditingController();
+  final branchCodeFieldController = TextEditingController();
+  final branchNameFieldController = TextEditingController();
+  final branchManagerFieldController = TextEditingController();
+  final slipFieldController = TextEditingController();
+  final amountFieldController = TextEditingController();
+  final passwordFieldController = TextEditingController();
+
+  final databaseReference = Firestore.instance;
+
+  void createRecord() async {
+    DocumentReference ref = await databaseReference.collection("books").add({
+      'id': 'Compl',
+      'joiningDate': _joiningDate,
+      'salesmanCode': salesmanCodeFieldController.text,
+      'salesmanName': salesmanNameFieldController.text,
+      'salesmanMobileNo': salesmanMobileNoFieldController.text,
+      'applicantName': applicantNameFieldController.text,
+      'fatherHusbandName': fatherHusbandNameFieldController.text,
+      'gender': _currentGenderSelected,
+      'dateOfBirth': _dateOfBirth,
+      'maritalStatus': _currentMaritalStatus,
+      'address': addressFieldController.text,
+      'mobileNo': mobileNoFieldController.text,
+      'nomineeName': nomineeNameFieldController.text,
+      'branchCode': branchCodeFieldController.text,
+      'branchName': branchNameFieldController.text,
+      'branchManager': branchManagerFieldController.text,
+      'slip': slipFieldController.text,
+      'amount': amountFieldController.text,
+      'password': passwordFieldController.text,
+    });
+    print(ref.documentID);
+  }
+
   @override
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
@@ -110,6 +154,8 @@ class AddMemberFormState extends State<AddMemberForm> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             _spacingSizedBox,
+            Text("Select Joining Date:", style: TextStyle(fontSize: 16)),
+            SizedBox(height: 8),
             SizedBox(
               height: 40,
               width: double.infinity,
@@ -197,6 +243,8 @@ class AddMemberFormState extends State<AddMemberForm> {
               ],
             ),
             _spacingSizedBox,
+            Text("Select Joining Date:", style: TextStyle(fontSize: 16)),
+            SizedBox(height: 8),
             SizedBox(
               width: double.infinity,
               height: 40,

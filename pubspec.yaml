@@ -30,6 +30,7 @@ dependencies:
   intl: ^0.16.1
   flutter_launcher_icons: '^0.7.3'
   change_app_package_name: ^0.1.2
+  cloud_firestore: ^0.13.7
 
 # flutter_icons:
 #   image_path_android: 'assets/icon/icon.jpeg'
