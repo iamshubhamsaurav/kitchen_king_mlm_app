@@ -146,15 +146,6 @@ class AddMemberFormState extends State<AddMemberForm> {
   // Firestore Refrence
   final databaseReference = Firestore.instance;
 
-  void _getData() {
-    databaseReference
-        .collection("membersCount")
-        .getDocuments()
-        .then((QuerySnapshot snapshot) {
-      snapshot.documents.forEach((f) => print(f.data));
-    });
-  }
-
   String _createId(int count) {
     // print("@@@@@@@@@@@@@@@@@ count $count");
     count++;
@@ -200,14 +191,45 @@ class AddMemberFormState extends State<AddMemberForm> {
         'amount': _amountFieldController.text,
         'password': _passwordFieldController.text,
       }).whenComplete(() => {
+            showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    elevation: 20,
+                    title: Text("Registration Successful"),
+                    actions: <Widget>[
+                      FlatButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: Text('OK',
+                              style:
+                                  TextStyle(color: Colors.blue, fontSize: 18)))
+                    ],
+                    content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Text("Member Id: $id"),
+                          SizedBox(height: 10),
+                          Text("Password: ${_passwordFieldController.text}")
+                        ]),
+                  );
+                }),
             setFieldsToDefaults(),
             setState(() {
               _isSubmitButtonEnabled = true;
             }),
           });
     });
+  }
 
-    // setFieldsToDefaults();
+  void _submitRegistrationForm() {
+    if (_formKey.currentState.validate()) {
+      // If the form is valid, display a snackbar. In the real world,
+      // you'd often call a server or save the information in a database.
+      _registerMember();
+      Scaffold.of(context)
+          .showSnackBar(SnackBar(content: Text('Processing Data')));
+    }
   }
 
   @override
@@ -237,6 +259,12 @@ class AddMemberFormState extends State<AddMemberForm> {
             ),
             _spacingSizedBox,
             TextFormField(
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Please enter salesman code no.';
+                }
+                return null;
+              },
               controller: _salesmanCodeFieldController,
               decoration: InputDecoration(
                 hintText: 'Salesman Code No.',
@@ -270,6 +298,12 @@ class AddMemberFormState extends State<AddMemberForm> {
             ),
             _spacingSizedBox,
             TextFormField(
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Please enter applicant name';
+                }
+                return null;
+              },
               controller: _applicantNameFieldController,
               keyboardType: TextInputType.multiline,
               maxLines: null,
@@ -364,6 +398,12 @@ class AddMemberFormState extends State<AddMemberForm> {
             ),
             _spacingSizedBox,
             TextFormField(
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Please enter mobile no.';
+                }
+                return null;
+              },
               controller: _mobileNoFieldController,
               keyboardType: TextInputType.phone,
               decoration: InputDecoration(
@@ -440,6 +480,12 @@ class AddMemberFormState extends State<AddMemberForm> {
             ),
             _spacingSizedBox,
             TextFormField(
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Please enter password';
+                }
+                return null;
+              },
               controller: _passwordFieldController,
               obscureText: true,
               decoration: InputDecoration(
@@ -457,7 +503,9 @@ class AddMemberFormState extends State<AddMemberForm> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                onPressed: _isSubmitButtonEnabled ? _registerMember : null,
+                // onPressed: _isSubmitButtonEnabled ? _registerMember : null,
+                onPressed:
+                    _isSubmitButtonEnabled ? _submitRegistrationForm : null,
                 padding: EdgeInsets.all(12),
                 color: _isSubmitButtonEnabled ? Colors.blue : Colors.blueGrey,
                 child: Text('SUBMIT', style: TextStyle(color: Colors.white)),
