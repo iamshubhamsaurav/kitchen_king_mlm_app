@@ -53,6 +53,8 @@ class AddMemberFormState extends State<AddMemberForm> {
   // not a GlobalKey<MyCustomFormState>.
   final _formKey = GlobalKey<FormState>();
 
+  bool _isSubmitButtonEnabled = true;
+
   final _borderForAllFields =
       OutlineInputBorder(borderRadius: BorderRadius.circular(12.0));
 
@@ -102,46 +104,110 @@ class AddMemberFormState extends State<AddMemberForm> {
   }
 
   // All the fields Controller
-  final salesmanCodeFieldController = TextEditingController();
-  final salesmanNameFieldController = TextEditingController();
-  final salesmanMobileNoFieldController = TextEditingController();
-  final applicantNameFieldController = TextEditingController();
-  final fatherHusbandNameFieldController = TextEditingController();
-  final addressFieldController = TextEditingController();
-  final mobileNoFieldController = TextEditingController();
-  final nomineeNameFieldController = TextEditingController();
-  final branchCodeFieldController = TextEditingController();
-  final branchNameFieldController = TextEditingController();
-  final branchManagerFieldController = TextEditingController();
-  final slipFieldController = TextEditingController();
-  final amountFieldController = TextEditingController();
-  final passwordFieldController = TextEditingController();
+  final _salesmanCodeFieldController = TextEditingController();
+  final _salesmanNameFieldController = TextEditingController();
+  final _salesmanMobileNoFieldController = TextEditingController();
+  final _applicantNameFieldController = TextEditingController();
+  final _fatherHusbandNameFieldController = TextEditingController();
+  final _addressFieldController = TextEditingController();
+  final _mobileNoFieldController = TextEditingController();
+  final _nomineeNameFieldController = TextEditingController();
+  final _branchCodeFieldController = TextEditingController();
+  final _branchNameFieldController = TextEditingController();
+  final _branchManagerFieldController = TextEditingController();
+  final _slipFieldController = TextEditingController();
+  final _amountFieldController = TextEditingController();
+  final _passwordFieldController = TextEditingController();
 
+  void setFieldsToDefaults() {
+    //DateFields to Defaults
+    _joiningDate = DateTime.now();
+    _dateOfBirth = DateTime.now();
+    // DropDown To Default
+    _currentGenderSelected = "Male";
+    _currentMaritalStatus = "Single";
+    // TextFormField To Default Value
+    _salesmanCodeFieldController.text = "";
+    _salesmanNameFieldController.text = "";
+    _salesmanMobileNoFieldController.text = "";
+    _applicantNameFieldController.text = "";
+    _fatherHusbandNameFieldController.text = "";
+    _addressFieldController.text = "";
+    _mobileNoFieldController.text = "";
+    _nomineeNameFieldController.text = "";
+    _branchCodeFieldController.text = "";
+    _branchNameFieldController.text = "";
+    _branchManagerFieldController.text = "";
+    _slipFieldController.text = "";
+    _amountFieldController.text = "";
+    _passwordFieldController.text = "";
+  }
+
+  // Firestore Refrence
   final databaseReference = Firestore.instance;
 
-  void createRecord() async {
-    DocumentReference ref = await databaseReference.collection("books").add({
-      'id': 'Compl',
-      'joiningDate': _joiningDate,
-      'salesmanCode': salesmanCodeFieldController.text,
-      'salesmanName': salesmanNameFieldController.text,
-      'salesmanMobileNo': salesmanMobileNoFieldController.text,
-      'applicantName': applicantNameFieldController.text,
-      'fatherHusbandName': fatherHusbandNameFieldController.text,
-      'gender': _currentGenderSelected,
-      'dateOfBirth': _dateOfBirth,
-      'maritalStatus': _currentMaritalStatus,
-      'address': addressFieldController.text,
-      'mobileNo': mobileNoFieldController.text,
-      'nomineeName': nomineeNameFieldController.text,
-      'branchCode': branchCodeFieldController.text,
-      'branchName': branchNameFieldController.text,
-      'branchManager': branchManagerFieldController.text,
-      'slip': slipFieldController.text,
-      'amount': amountFieldController.text,
-      'password': passwordFieldController.text,
+  void _getData() {
+    databaseReference
+        .collection("membersCount")
+        .getDocuments()
+        .then((QuerySnapshot snapshot) {
+      snapshot.documents.forEach((f) => print(f.data));
     });
-    print(ref.documentID);
+  }
+
+  String _createId(int count) {
+    // print("@@@@@@@@@@@@@@@@@ count $count");
+    count++;
+    // print("@@@@@@@@@@@@@@@@@ count $count");
+    var id = count.toString().padLeft(4, "0");
+    return "kk" + id;
+  }
+
+  void _registerMember() async {
+    setState(() {
+      _isSubmitButtonEnabled = false;
+    });
+
+    await databaseReference
+        .collection("members")
+        .getDocuments()
+        .then((QuerySnapshot snapshot) {
+      // snapshot.documents.forEach((f) => print('${f.data}}'));
+      // print("&&&&&&&&");
+      // print(snapshot.documents.toList().length);
+      // totalMembers = snapshot.documents.toList().length;
+      // print("##########$totalMembers");
+      // Add the registraion code here...
+      var id = _createId(snapshot.documents.toList().length);
+      databaseReference.collection("members").document(id).setData({
+        'id': id,
+        'joiningDate': _joiningDate,
+        'salesmanCode': _salesmanCodeFieldController.text.toLowerCase(),
+        'salesmanName': _salesmanNameFieldController.text,
+        'salesmanMobileNo': _salesmanMobileNoFieldController.text,
+        'applicantName': _applicantNameFieldController.text,
+        'fatherHusbandName': _fatherHusbandNameFieldController.text,
+        'gender': _currentGenderSelected,
+        'dateOfBirth': _dateOfBirth,
+        'maritalStatus': _currentMaritalStatus,
+        'address': _addressFieldController.text,
+        'mobileNo': _mobileNoFieldController.text,
+        'nomineeName': _nomineeNameFieldController.text,
+        'branchCode': _branchCodeFieldController.text,
+        'branchName': _branchNameFieldController.text,
+        'branchManager': _branchManagerFieldController.text,
+        'slip': _slipFieldController.text,
+        'amount': _amountFieldController.text,
+        'password': _passwordFieldController.text,
+      }).whenComplete(() => {
+            setFieldsToDefaults(),
+            setState(() {
+              _isSubmitButtonEnabled = true;
+            }),
+          });
+    });
+
+    // setFieldsToDefaults();
   }
 
   @override
@@ -171,6 +237,7 @@ class AddMemberFormState extends State<AddMemberForm> {
             ),
             _spacingSizedBox,
             TextFormField(
+              controller: _salesmanCodeFieldController,
               decoration: InputDecoration(
                 hintText: 'Salesman Code No.',
                 labelText: "Salesman Code No.",
@@ -180,6 +247,7 @@ class AddMemberFormState extends State<AddMemberForm> {
             ),
             _spacingSizedBox,
             TextFormField(
+              controller: _salesmanNameFieldController,
               keyboardType: TextInputType.multiline,
               maxLines: null,
               decoration: InputDecoration(
@@ -191,6 +259,7 @@ class AddMemberFormState extends State<AddMemberForm> {
             ),
             _spacingSizedBox,
             TextFormField(
+              controller: _salesmanMobileNoFieldController,
               keyboardType: TextInputType.phone,
               decoration: InputDecoration(
                 hintText: 'Salesman Mobile No',
@@ -201,6 +270,7 @@ class AddMemberFormState extends State<AddMemberForm> {
             ),
             _spacingSizedBox,
             TextFormField(
+              controller: _applicantNameFieldController,
               keyboardType: TextInputType.multiline,
               maxLines: null,
               decoration: InputDecoration(
@@ -212,6 +282,7 @@ class AddMemberFormState extends State<AddMemberForm> {
             ),
             _spacingSizedBox,
             TextFormField(
+              controller: _fatherHusbandNameFieldController,
               keyboardType: TextInputType.multiline,
               maxLines: null,
               decoration: InputDecoration(
@@ -281,6 +352,7 @@ class AddMemberFormState extends State<AddMemberForm> {
             ),
             _spacingSizedBox,
             TextFormField(
+              controller: _addressFieldController,
               keyboardType: TextInputType.multiline,
               maxLines: null,
               decoration: InputDecoration(
@@ -292,6 +364,7 @@ class AddMemberFormState extends State<AddMemberForm> {
             ),
             _spacingSizedBox,
             TextFormField(
+              controller: _mobileNoFieldController,
               keyboardType: TextInputType.phone,
               decoration: InputDecoration(
                 hintText: 'Mobile No',
@@ -302,6 +375,7 @@ class AddMemberFormState extends State<AddMemberForm> {
             ),
             _spacingSizedBox,
             TextFormField(
+              controller: _nomineeNameFieldController,
               keyboardType: TextInputType.multiline,
               maxLines: null,
               decoration: InputDecoration(
@@ -313,6 +387,7 @@ class AddMemberFormState extends State<AddMemberForm> {
             ),
             _spacingSizedBox,
             TextFormField(
+              controller: _branchCodeFieldController,
               decoration: InputDecoration(
                 hintText: 'Branch code',
                 labelText: "Branch code",
@@ -322,6 +397,7 @@ class AddMemberFormState extends State<AddMemberForm> {
             ),
             _spacingSizedBox,
             TextFormField(
+              controller: _branchNameFieldController,
               decoration: InputDecoration(
                 hintText: 'Branch name',
                 labelText: "Branch name",
@@ -331,6 +407,7 @@ class AddMemberFormState extends State<AddMemberForm> {
             ),
             _spacingSizedBox,
             TextFormField(
+              controller: _branchManagerFieldController,
               decoration: InputDecoration(
                 hintText: 'Branch manager',
                 labelText: "Branch manager",
@@ -340,6 +417,7 @@ class AddMemberFormState extends State<AddMemberForm> {
             ),
             _spacingSizedBox,
             TextFormField(
+              controller: _slipFieldController,
               keyboardType: TextInputType.multiline,
               maxLines: null,
               decoration: InputDecoration(
@@ -351,6 +429,7 @@ class AddMemberFormState extends State<AddMemberForm> {
             ),
             _spacingSizedBox,
             TextFormField(
+              controller: _amountFieldController,
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
                 hintText: 'Amount',
@@ -361,6 +440,7 @@ class AddMemberFormState extends State<AddMemberForm> {
             ),
             _spacingSizedBox,
             TextFormField(
+              controller: _passwordFieldController,
               obscureText: true,
               decoration: InputDecoration(
                 hintText: 'Password',
@@ -377,9 +457,9 @@ class AddMemberFormState extends State<AddMemberForm> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                onPressed: () {},
+                onPressed: _isSubmitButtonEnabled ? _registerMember : null,
                 padding: EdgeInsets.all(12),
-                color: Colors.blue,
+                color: _isSubmitButtonEnabled ? Colors.blue : Colors.blueGrey,
                 child: Text('SUBMIT', style: TextStyle(color: Colors.white)),
               ),
             ),
