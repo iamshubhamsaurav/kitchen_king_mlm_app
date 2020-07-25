@@ -36,29 +36,6 @@ class MemberPage extends StatelessWidget {
     );
   }
 
-  String readTimestamp(int timestamp) {
-    var now = new DateTime.now();
-    var format = new DateFormat('HH:mm a');
-    var date = new DateTime.fromMicrosecondsSinceEpoch(timestamp * 1000);
-    var diff = date.difference(now);
-    var time = '';
-
-    if (diff.inSeconds <= 0 ||
-        diff.inSeconds > 0 && diff.inMinutes == 0 ||
-        diff.inMinutes > 0 && diff.inHours == 0 ||
-        diff.inHours > 0 && diff.inDays == 0) {
-      time = format.format(date);
-    } else {
-      if (diff.inDays == 1) {
-        time = diff.inDays.toString() + 'DAY AGO';
-      } else {
-        time = diff.inDays.toString() + 'DAYS AGO';
-      }
-    }
-
-    return time;
-  }
-
   @override
   Widget build(BuildContext context) {
     final companyIcon = Hero(
@@ -96,7 +73,7 @@ class MemberPage extends StatelessWidget {
             welcome,
             buildKeyAndValueItem("User Id", "${document['id']}"),
             buildKeyAndValueItem("Date of Joining",
-                '${DateFormat('yMd').format(document['joiningDate'].toDate())}'),
+                '${DateFormat('dd-MM-yyyy').format(document['joiningDate'].toDate())}'),
             buildKeyAndValueItem(
                 "Salesman Code No", "${document['salesmanCode']}"),
             buildKeyAndValueItem(
@@ -109,7 +86,7 @@ class MemberPage extends StatelessWidget {
                 "Father/Husband", "${document['fatherHusbandName']}"),
             buildKeyAndValueItem("Gender", "${document['gender']}"),
             buildKeyAndValueItem("Date of Birth",
-                '${DateFormat('yMd').format(document['dateOfBirth'].toDate())}'),
+                '${DateFormat('dd-MM-yyyy').format(document['dateOfBirth'].toDate())}'),
             buildKeyAndValueItem(
                 "Marital Status", "${document['maritalStatus']}"),
             buildKeyAndValueItem("Address.", "${document['address']}"),

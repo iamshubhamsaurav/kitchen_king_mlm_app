@@ -87,8 +87,6 @@ class AddMemberFormState extends State<AddMemberForm> {
   }
 
   Future<DateTime> getDate() {
-    // Imagine that this function is
-    // more complex and slow.
     return showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -147,9 +145,7 @@ class AddMemberFormState extends State<AddMemberForm> {
   final databaseReference = Firestore.instance;
 
   String _createId(int count) {
-    // print("@@@@@@@@@@@@@@@@@ count $count");
     count++;
-    // print("@@@@@@@@@@@@@@@@@ count $count");
     var id = count.toString().padLeft(4, "0");
     return "kk" + id;
   }
@@ -171,6 +167,7 @@ class AddMemberFormState extends State<AddMemberForm> {
       // Add the registraion code here...
       var id = _createId(snapshot.documents.toList().length);
       var password = _passwordFieldController.text;
+      var name = _applicantNameFieldController.text;
       databaseReference.collection("members").document(id).setData({
         'id': id,
         'joiningDate': _joiningDate,
@@ -211,7 +208,9 @@ class AddMemberFormState extends State<AddMemberForm> {
                         children: <Widget>[
                           Text("Member Id: $id"),
                           SizedBox(height: 10),
-                          Text("Password: $password")
+                          Text("Password: $password"),
+                          SizedBox(height: 10),
+                          Text("Name: $name"),
                         ]),
                   );
                 }),
@@ -254,7 +253,7 @@ class AddMemberFormState extends State<AddMemberForm> {
                 child: _joiningDate == null
                     ? Text('Select Joining Date',
                         style: TextStyle(color: Colors.white))
-                    : Text(' ${DateFormat('yMd').format(_joiningDate)}',
+                    : Text(' ${DateFormat('dd-MM-yyyy').format(_joiningDate)}',
                         style: TextStyle(color: Colors.white)),
               ),
             ),
@@ -368,7 +367,7 @@ class AddMemberFormState extends State<AddMemberForm> {
                 child: _dateOfBirth == null
                     ? Text('Select Date of Birth',
                         style: TextStyle(color: Colors.white))
-                    : Text(' ${DateFormat('yMd').format(_dateOfBirth)}',
+                    : Text(' ${DateFormat('dd-MM-yyyy').format(_dateOfBirth)}',
                         style: TextStyle(color: Colors.white)),
               ),
             ),
