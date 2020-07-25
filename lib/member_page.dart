@@ -98,6 +98,7 @@ class MemberPage extends StatelessWidget {
                 "Branch Manager", "${document['branchManager']}"),
             buildKeyAndValueItem("Slip", "${document['slip']}"),
             buildKeyAndValueItem("Amount", "${document['amount']}"),
+            buildKeyAndValueItem("Password", "${document['password']}"),
           ],
         ),
       ),

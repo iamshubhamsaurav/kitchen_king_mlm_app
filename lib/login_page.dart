@@ -4,7 +4,7 @@ import 'member_list.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class LoginPage extends StatefulWidget {
-  static String tag = 'login-page';
+  // static String tag = 'login-page';
   @override
   _LoginPageState createState() => new _LoginPageState();
 }
@@ -24,6 +24,7 @@ class _LoginPageState extends State<LoginPage> {
   void handleLogin() {
     setState(() {
       isLoginButtonEnabled = false;
+      invalidLoginText = "";
     });
     if (!_userIdFieldController.text.startsWith('kk')) {
       // == "komal"
@@ -49,6 +50,7 @@ class _LoginPageState extends State<LoginPage> {
       if (document['password'] == _passwordFieldController.text &&
           document['id'] == _userIdFieldController.text) {
         setState(() {
+          invalidLoginText = "";
           isLoginButtonEnabled = true;
         });
         _setFieldsToDefaults();
@@ -58,7 +60,7 @@ class _LoginPageState extends State<LoginPage> {
         );
       } else {
         setState(() {
-          invalidLoginText = "Invalid Password";
+          invalidLoginText = "Invalid Id/Password";
           isLoginButtonEnabled = true;
         });
       }
@@ -75,6 +77,7 @@ class _LoginPageState extends State<LoginPage> {
       if (document['password'] == _passwordFieldController.text &&
           document['id'] == _userIdFieldController.text.toLowerCase()) {
         setState(() {
+          invalidLoginText = "";
           isLoginButtonEnabled = true;
         });
         _setFieldsToDefaults();
