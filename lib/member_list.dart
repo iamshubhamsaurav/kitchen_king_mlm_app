@@ -46,7 +46,7 @@ class _MemberListState extends State<MemberList> {
           if (snapshot.hasError) return new Text('Error: ${snapshot.error}');
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:
-              return Text('Loading...');
+              return Center(child: CircularProgressIndicator());
             default:
               return ListView(
                 children:
