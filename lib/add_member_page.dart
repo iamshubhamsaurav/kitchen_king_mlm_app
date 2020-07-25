@@ -290,6 +290,12 @@ class AddMemberFormState extends State<AddMemberForm> {
             ),
             _spacingSizedBox,
             TextFormField(
+              validator: (value) {
+                if (value.length < 10) {
+                  return 'Invalid Mobile No.';
+                }
+                return null;
+              },
               controller: _salesmanMobileNoFieldController,
               keyboardType: TextInputType.phone,
               decoration: InputDecoration(
@@ -402,8 +408,8 @@ class AddMemberFormState extends State<AddMemberForm> {
             _spacingSizedBox,
             TextFormField(
               validator: (value) {
-                if (value.isEmpty) {
-                  return 'Please enter mobile no.';
+                if (value.length < 10) {
+                  return 'Invalid Mobile No.';
                 }
                 return null;
               },
@@ -484,8 +490,8 @@ class AddMemberFormState extends State<AddMemberForm> {
             _spacingSizedBox,
             TextFormField(
               validator: (value) {
-                if (value.isEmpty) {
-                  return 'Please enter password';
+                if (value.length < 4) {
+                  return 'Password should be min 4 char';
                 }
                 return null;
               },

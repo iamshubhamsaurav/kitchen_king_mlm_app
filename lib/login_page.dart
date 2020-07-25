@@ -14,6 +14,31 @@ class _LoginPageState extends State<LoginPage> {
   final _passwordFieldController = TextEditingController();
 
   String invalidLoginText = "";
+  bool isLoginButtonEnabled = true;
+
+  void loginAdmin() async {
+    await Firestore.instance
+        .collection('admin')
+        .document('admin')
+        .get()
+        .then((DocumentSnapshot document) {
+      if (document['password'] == _passwordFieldController.text &&
+          document['id'] == _userIdFieldController.text) {
+        setState(() {
+          isLoginButtonEnabled = true;
+        });
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => MemberList()),
+        );
+      } else {
+        setState(() {
+          invalidLoginText = "Invalid Password";
+          isLoginButtonEnabled = true;
+        });
+      }
+    });
+  }
 
   void loginMember() async {
     await Firestore.instance
@@ -21,11 +46,11 @@ class _LoginPageState extends State<LoginPage> {
         .document(_userIdFieldController.text.toLowerCase())
         .get()
         .then((DocumentSnapshot document) {
-      // print("#############");
-      // print(document['id']);
-      // print(document['password']);
       if (document['password'] == _passwordFieldController.text &&
           document['id'] == _userIdFieldController.text) {
+        setState(() {
+          isLoginButtonEnabled = true;
+        });
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -38,6 +63,7 @@ class _LoginPageState extends State<LoginPage> {
       } else {
         setState(() {
           invalidLoginText = "Invalid Id/Password";
+          isLoginButtonEnabled = true;
         });
       }
     });
@@ -84,43 +110,36 @@ class _LoginPageState extends State<LoginPage> {
     final invalidLogin =
         Text(invalidLoginText, style: TextStyle(color: Colors.red));
 
+    void handleLogin() {
+      setState(() {
+        isLoginButtonEnabled = false;
+      });
+      if (_userIdFieldController.text == "admin") {
+        loginAdmin();
+      } else {
+        if (_userIdFieldController.text.length == 6 &&
+            _userIdFieldController.text.startsWith("kk")) {
+          loginMember();
+        } else {
+          setState(() {
+            invalidLoginText = "Invalid User Id";
+          });
+        }
+      }
+    }
+
     final loginButton = Padding(
       padding: EdgeInsets.symmetric(vertical: 16.0),
       child: RaisedButton(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(24),
         ),
-        onPressed: () {
-          if (_userIdFieldController.text == "admin" &&
-              _passwordFieldController.text == "admin") {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => MemberList()),
-            );
-          } else {
-            if (_userIdFieldController.text.length == 6 &&
-                _userIdFieldController.text.startsWith("kk")) {
-              loginMember();
-            } else {
-              setState(() {
-                invalidLoginText = "Invalid User Id";
-              });
-            }
-          }
-        },
+        onPressed: isLoginButtonEnabled ? handleLogin : null,
         padding: EdgeInsets.all(12),
-        color: Colors.lightBlueAccent,
+        color: isLoginButtonEnabled ? Colors.lightBlueAccent : Colors.blueGrey,
         child: Text('Log In', style: TextStyle(color: Colors.white)),
       ),
     );
-
-    // final forgotLabel = FlatButton(
-    //   child: Text(
-    //     'Forgot password?',
-    //     style: TextStyle(color: Colors.black54),
-    //   ),
-    //   onPressed: () {},
-    // );
 
     return Scaffold(
       backgroundColor: Colors.white,
