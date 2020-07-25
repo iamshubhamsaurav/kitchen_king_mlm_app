@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 class MemberPage extends StatelessWidget {
   final bool isAdmin;
-  MemberPage({Key key, @required this.isAdmin}) : super(key: key);
+  final DocumentSnapshot document;
+  MemberPage({Key key, @required this.isAdmin, @required this.document})
+      : super(key: key);
 
   Widget buildKeyAndValueItem(String key, String value) {
     return Column(
@@ -30,6 +34,29 @@ class MemberPage extends StatelessWidget {
         Divider(height: 10, color: Colors.black87)
       ],
     );
+  }
+
+  String readTimestamp(int timestamp) {
+    var now = new DateTime.now();
+    var format = new DateFormat('HH:mm a');
+    var date = new DateTime.fromMicrosecondsSinceEpoch(timestamp * 1000);
+    var diff = date.difference(now);
+    var time = '';
+
+    if (diff.inSeconds <= 0 ||
+        diff.inSeconds > 0 && diff.inMinutes == 0 ||
+        diff.inMinutes > 0 && diff.inHours == 0 ||
+        diff.inHours > 0 && diff.inDays == 0) {
+      time = format.format(date);
+    } else {
+      if (diff.inDays == 1) {
+        time = diff.inDays.toString() + 'DAY AGO';
+      } else {
+        time = diff.inDays.toString() + 'DAYS AGO';
+      }
+    }
+
+    return time;
   }
 
   @override
@@ -67,23 +94,33 @@ class MemberPage extends StatelessWidget {
           children: <Widget>[
             companyIcon,
             welcome,
-            buildKeyAndValueItem("Date of Joining", '10/7/2020'),
-            buildKeyAndValueItem("Salesman Code No", "89802"),
-            buildKeyAndValueItem("Salesman Name", "Mr Salesman"),
-            buildKeyAndValueItem("Application Name", "Ram Kumar"),
-            buildKeyAndValueItem("Father/Husband", "Mr Father "),
-            buildKeyAndValueItem("Gender", "Male"),
-            buildKeyAndValueItem("Date of Birth", "02/01/1996"),
-            buildKeyAndValueItem("Matital Status", "Single"),
-            buildKeyAndValueItem("Address.",
-                "Temp Address Which is very long to check the text overflow. And the text should work on multiline level"),
-            buildKeyAndValueItem("Mobile No.", "8980200000"),
-            buildKeyAndValueItem("Nominee Name", "Mr Kushal Ranjan Prasad"),
-            buildKeyAndValueItem("Branch Code", "014"),
-            buildKeyAndValueItem("Branch Name", "CP, Delhi"),
-            buildKeyAndValueItem("Branch Manager", "Mr Lakshman"),
-            buildKeyAndValueItem("Slip", "----"),
-            buildKeyAndValueItem("Amount", "500.0"),
+            buildKeyAndValueItem("User Id", "${document['id']}"),
+            buildKeyAndValueItem("Date of Joining",
+                '${DateFormat('yMd').format(document['joiningDate'].toDate())}'),
+            buildKeyAndValueItem(
+                "Salesman Code No", "${document['salesmanCode']}"),
+            buildKeyAndValueItem(
+                "Salesman Name", "${document['salesmanName']}"),
+            buildKeyAndValueItem(
+                "Salesman Mobile No", "${document['salesmanMobileNo']}"),
+            buildKeyAndValueItem(
+                "Applicant Name", "${document['applicantName']}"),
+            buildKeyAndValueItem(
+                "Father/Husband", "${document['fatherHusbandName']}"),
+            buildKeyAndValueItem("Gender", "${document['gender']}"),
+            buildKeyAndValueItem("Date of Birth",
+                '${DateFormat('yMd').format(document['dateOfBirth'].toDate())}'),
+            buildKeyAndValueItem(
+                "Marital Status", "${document['maritalStatus']}"),
+            buildKeyAndValueItem("Address.", "${document['address']}"),
+            buildKeyAndValueItem("Mobile No.", "${document['mobileNo']}"),
+            buildKeyAndValueItem("Nominee Name", "${document['nomineeName']}"),
+            buildKeyAndValueItem("Branch Code", "${document['branchCode']}"),
+            buildKeyAndValueItem("Branch Name", "${document['branchName']}"),
+            buildKeyAndValueItem(
+                "Branch Manager", "${document['branchManager']}"),
+            buildKeyAndValueItem("Slip", "${document['slip']}"),
+            buildKeyAndValueItem("Amount", "${document['amount']}"),
           ],
         ),
       ),

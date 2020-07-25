@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'member_page.dart';
 import 'member_list.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class LoginPage extends StatefulWidget {
   static String tag = 'login-page';
@@ -9,8 +10,38 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final emailFieldController = TextEditingController();
-  final passwordFieldController = TextEditingController();
+  final _userIdFieldController = TextEditingController();
+  final _passwordFieldController = TextEditingController();
+
+  String invalidLoginText = "";
+
+  void loginMember() async {
+    await Firestore.instance
+        .collection('members')
+        .document(_userIdFieldController.text.toLowerCase())
+        .get()
+        .then((DocumentSnapshot document) {
+      print("#############");
+      print(document['id']);
+      print(document['password']);
+      if (document['password'] == _passwordFieldController.text &&
+          document['id'] == _userIdFieldController.text) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MemberPage(
+              isAdmin: false,
+              document: document,
+            ),
+          ),
+        );
+      } else {
+        setState(() {
+          invalidLoginText = "Invalid Id/Password";
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,20 +57,20 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
 
-    final email = TextFormField(
-      controller: emailFieldController,
+    final userId = TextFormField(
+      controller: _userIdFieldController,
       keyboardType: TextInputType.emailAddress,
       autofocus: false,
       decoration: InputDecoration(
-        hintText: 'Email',
-        labelText: "Email",
+        hintText: 'User Id',
+        labelText: "User Id",
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
       ),
     );
 
     final password = TextFormField(
-      controller: passwordFieldController,
+      controller: _passwordFieldController,
       autofocus: false,
       obscureText: true,
       decoration: InputDecoration(
@@ -50,6 +81,9 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
 
+    final invalidLogin =
+        Text(invalidLoginText, style: TextStyle(color: Colors.red));
+
     final loginButton = Padding(
       padding: EdgeInsets.symmetric(vertical: 16.0),
       child: RaisedButton(
@@ -57,20 +91,21 @@ class _LoginPageState extends State<LoginPage> {
           borderRadius: BorderRadius.circular(24),
         ),
         onPressed: () {
-          if (emailFieldController.text == "admin" &&
-              passwordFieldController.text == "admin") {
+          if (_userIdFieldController.text == "admin" &&
+              _passwordFieldController.text == "admin") {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => MemberList()),
             );
           } else {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => MemberPage(
-                        isAdmin: false,
-                      )),
-            );
+            if (_userIdFieldController.text.length == 6 &&
+                _userIdFieldController.text.startsWith("kk")) {
+              loginMember();
+            } else {
+              setState(() {
+                invalidLoginText = "Invalid User Id";
+              });
+            }
           }
         },
         padding: EdgeInsets.all(12),
@@ -96,10 +131,12 @@ class _LoginPageState extends State<LoginPage> {
           children: <Widget>[
             logo,
             SizedBox(height: 48.0),
-            email,
+            userId,
             SizedBox(height: 20.0),
             password,
-            SizedBox(height: 24.0),
+            SizedBox(height: 8.0),
+            invalidLogin,
+            // SizedBox(height: 24.0),
             loginButton,
             // forgotLabel
           ],

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'member_page.dart';
 import 'add_member_page.dart';
@@ -47,7 +48,10 @@ class _MemberListState extends State<MemberList> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => MemberPage(isAdmin: true)),
+                      builder: (context) => MemberPage(
+                            isAdmin: true,
+                            // document: DocumentSnapshot,
+                          )),
                 );
               },
               leading: Icon(

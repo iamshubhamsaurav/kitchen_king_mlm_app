@@ -170,6 +170,7 @@ class AddMemberFormState extends State<AddMemberForm> {
       // print("##########$totalMembers");
       // Add the registraion code here...
       var id = _createId(snapshot.documents.toList().length);
+      var password = _passwordFieldController.text;
       databaseReference.collection("members").document(id).setData({
         'id': id,
         'joiningDate': _joiningDate,
@@ -210,7 +211,7 @@ class AddMemberFormState extends State<AddMemberForm> {
                         children: <Widget>[
                           Text("Member Id: $id"),
                           SizedBox(height: 10),
-                          Text("Password: ${_passwordFieldController.text}")
+                          Text("Password: $password")
                         ]),
                   );
                 }),
@@ -228,7 +229,7 @@ class AddMemberFormState extends State<AddMemberForm> {
       // you'd often call a server or save the information in a database.
       _registerMember();
       Scaffold.of(context)
-          .showSnackBar(SnackBar(content: Text('Processing Data')));
+          .showSnackBar(SnackBar(content: Text('Registering Member')));
     }
   }
 
