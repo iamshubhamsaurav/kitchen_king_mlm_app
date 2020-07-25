@@ -21,6 +21,25 @@ class _LoginPageState extends State<LoginPage> {
     _passwordFieldController.text = "";
   }
 
+  void handleLogin() {
+    setState(() {
+      isLoginButtonEnabled = false;
+    });
+    if (!_userIdFieldController.text.startsWith('kk')) {
+      // == "komal"
+      loginAdmin();
+    } else {
+      if (_userIdFieldController.text.length == 6 &&
+          _userIdFieldController.text.startsWith("kk")) {
+        loginMember();
+      } else {
+        setState(() {
+          invalidLoginText = "Invalid User Id";
+        });
+      }
+    }
+  }
+
   void loginAdmin() async {
     await Firestore.instance
         .collection('admin')
@@ -46,6 +65,7 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
+// Added toLowerCase() for ease of use.
   void loginMember() async {
     await Firestore.instance
         .collection('members')
@@ -53,7 +73,7 @@ class _LoginPageState extends State<LoginPage> {
         .get()
         .then((DocumentSnapshot document) {
       if (document['password'] == _passwordFieldController.text &&
-          document['id'] == _userIdFieldController.text) {
+          document['id'] == _userIdFieldController.text.toLowerCase()) {
         setState(() {
           isLoginButtonEnabled = true;
         });
@@ -116,24 +136,6 @@ class _LoginPageState extends State<LoginPage> {
 
     final invalidLogin =
         Text(invalidLoginText, style: TextStyle(color: Colors.red));
-
-    void handleLogin() {
-      setState(() {
-        isLoginButtonEnabled = false;
-      });
-      if (_userIdFieldController.text == "admin") {
-        loginAdmin();
-      } else {
-        if (_userIdFieldController.text.length == 6 &&
-            _userIdFieldController.text.startsWith("kk")) {
-          loginMember();
-        } else {
-          setState(() {
-            invalidLoginText = "Invalid User Id";
-          });
-        }
-      }
-    }
 
     final loginButton = Padding(
       padding: EdgeInsets.symmetric(vertical: 16.0),
