@@ -16,6 +16,11 @@ class _LoginPageState extends State<LoginPage> {
   String invalidLoginText = "";
   bool isLoginButtonEnabled = true;
 
+  void _setFieldsToDefaults() {
+    _userIdFieldController.text = "";
+    _passwordFieldController.text = "";
+  }
+
   void loginAdmin() async {
     await Firestore.instance
         .collection('admin')
@@ -27,6 +32,7 @@ class _LoginPageState extends State<LoginPage> {
         setState(() {
           isLoginButtonEnabled = true;
         });
+        _setFieldsToDefaults();
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => MemberList()),
@@ -51,6 +57,7 @@ class _LoginPageState extends State<LoginPage> {
         setState(() {
           isLoginButtonEnabled = true;
         });
+        _setFieldsToDefaults();
         Navigator.push(
           context,
           MaterialPageRoute(
