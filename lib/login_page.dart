@@ -21,9 +21,9 @@ class _LoginPageState extends State<LoginPage> {
         .document(_userIdFieldController.text.toLowerCase())
         .get()
         .then((DocumentSnapshot document) {
-      print("#############");
-      print(document['id']);
-      print(document['password']);
+      // print("#############");
+      // print(document['id']);
+      // print(document['password']);
       if (document['password'] == _passwordFieldController.text &&
           document['id'] == _userIdFieldController.text) {
         Navigator.push(

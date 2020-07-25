@@ -261,8 +261,10 @@ class AddMemberFormState extends State<AddMemberForm> {
             _spacingSizedBox,
             TextFormField(
               validator: (value) {
-                if (value.isEmpty) {
-                  return 'Please enter salesman code no.';
+                if (value.length != 6 ||
+                    !value.startsWith("kk") ||
+                    value.contains(" ")) {
+                  return 'Enter valid salesman code';
                 }
                 return null;
               },
