@@ -40,30 +40,54 @@ class _MemberListState extends State<MemberList> {
         child: Icon(Icons.add, color: Colors.white),
       ),
       body: SafeArea(
-        child: ListView.builder(
-          itemCount: 8,
-          itemBuilder: (context, index) {
-            return ListTile(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => MemberPage(
-                            isAdmin: true,
-                            // document: DocumentSnapshot,
-                          )),
-                );
-              },
-              leading: Icon(
-                Icons.person,
-                size: 60,
-              ),
-              title: Text("member name : ${index + 1}"),
-              subtitle: Text("Member Id"),
-            );
-          },
-        ),
-      ),
+          child: StreamBuilder<QuerySnapshot>(
+        stream: Firestore.instance.collection('members').snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.hasError) return new Text('Error: ${snapshot.error}');
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+              return Text('Loading...');
+            default:
+              return ListView(
+                children:
+                    snapshot.data.documents.map((DocumentSnapshot document) {
+                  return Column(
+                    children: <Widget>[
+                      ListTile(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => MemberPage(
+                                isAdmin: true,
+                                document: document,
+                              ),
+                            ),
+                          );
+                        },
+                        contentPadding: EdgeInsets.symmetric(
+                            horizontal: 20.0, vertical: 10.0),
+                        // leading: Text("ID: ${document['id']}"),
+                        leading: Icon(
+                          Icons.person,
+                          size: 60,
+                        ),
+                        title: new Text(document['applicantName'],
+                            style: TextStyle(fontSize: 17)),
+                        subtitle: new Text("Mobile: ${document['mobileNo']}"),
+                        trailing: Icon(Icons.dashboard),
+                      ),
+                      Divider(
+                        height: 0,
+                        color: Colors.black54,
+                      )
+                    ],
+                  );
+                }).toList(),
+              );
+          }
+        },
+      )),
     );
   }
 }
