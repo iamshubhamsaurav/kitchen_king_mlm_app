@@ -74,6 +74,13 @@ class _LoginPageState extends State<LoginPage> {
         .document(_userIdFieldController.text.toLowerCase())
         .get()
         .then((DocumentSnapshot document) {
+      if (!document.exists) {
+        setState(() {
+          invalidLoginText = "User Does Not Exist";
+          isLoginButtonEnabled = true;
+        });
+        return;
+      }
       if (document['password'] == _passwordFieldController.text &&
           document['id'] == _userIdFieldController.text.toLowerCase()) {
         setState(() {
@@ -97,6 +104,10 @@ class _LoginPageState extends State<LoginPage> {
         });
       }
     });
+  }
+
+  void setLoginButtonToTrue() {
+    isLoginButtonEnabled = true;
   }
 
   @override
