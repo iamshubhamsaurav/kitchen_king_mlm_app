@@ -36,6 +36,7 @@ class _LoginPageState extends State<LoginPage> {
       } else {
         setState(() {
           invalidLoginText = "Invalid User Id";
+          isLoginButtonEnabled = true;
         });
       }
     }
