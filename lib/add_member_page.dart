@@ -230,7 +230,7 @@ class AddMemberFormState extends State<AddMemberForm> {
   void _sendSMS(String memberId, String password, String applicantName,
       String salesmanCode, List<String> recipents) async {
     var message =
-        "Kitchen King MLM\nMember Registered.\nID:$memberId\nName:$applicantName\nPassword:$password\nSalesmanCode:$salesmanCode";
+        "Kitchen King\nMember Registered.\nID:$memberId\nName:$applicantName\nPassword:$password\nSalesmanCode:$salesmanCode";
     String _result = await sendSMS(message: message, recipients: recipents)
         .catchError((onError) {
       print(onError);
@@ -243,8 +243,10 @@ class AddMemberFormState extends State<AddMemberForm> {
       // If the form is valid, display a snackbar. In the real world,
       // you'd often call a server or save the information in a database.
       _registerMember();
-      Scaffold.of(context)
-          .showSnackBar(SnackBar(content: Text('Registering Member')));
+      Scaffold.of(context).showSnackBar(SnackBar(
+        content: Text('Registering Member'),
+        duration: Duration(seconds: 3),
+      ));
     }
   }
 
