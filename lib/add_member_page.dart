@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_sms/flutter_sms.dart';
 
 class AddMemberPage extends StatefulWidget {
   @override
@@ -43,14 +44,7 @@ class AddMemberForm extends StatefulWidget {
   }
 }
 
-// Create a corresponding State class.
-// This class holds data related to the form.
 class AddMemberFormState extends State<AddMemberForm> {
-  // Create a global key that uniquely identifies the Form widget
-  // and allows validation of the form.
-  //
-  // Note: This is a GlobalKey<FormState>,
-  // not a GlobalKey<MyCustomFormState>.
   final _formKey = GlobalKey<FormState>();
 
   bool _isSubmitButtonEnabled = true;
@@ -168,6 +162,13 @@ class AddMemberFormState extends State<AddMemberForm> {
       var id = _createId(snapshot.documents.toList().length);
       var password = _passwordFieldController.text;
       var name = _applicantNameFieldController.text;
+      var salesmanCode = _salesmanCodeFieldController.text;
+
+      var mobileNumbers = [
+        _mobileNoFieldController.text,
+        _salesmanMobileNoFieldController.text
+      ];
+
       databaseReference.collection("members").document(id).setData({
         'id': id,
         'joiningDate': _joiningDate,
@@ -198,7 +199,11 @@ class AddMemberFormState extends State<AddMemberForm> {
                     title: Text("Registration Successful"),
                     actions: <Widget>[
                       FlatButton(
-                          onPressed: () => Navigator.pop(context),
+                          onPressed: () {
+                            Navigator.pop(context);
+                            _sendSMS(id, password, name, salesmanCode,
+                                mobileNumbers);
+                          },
                           child: Text('OK',
                               style:
                                   TextStyle(color: Colors.blue, fontSize: 18)))
@@ -220,6 +225,17 @@ class AddMemberFormState extends State<AddMemberForm> {
             }),
           });
     });
+  }
+
+  void _sendSMS(String memberId, String password, String applicantName,
+      String salesmanCode, List<String> recipents) async {
+    var message =
+        "Kitchen King MLM\nMember Registered.\nID:$memberId\nName:$applicantName\nPassword:$password\nSalesmanCode:$salesmanCode";
+    String _result = await sendSMS(message: message, recipients: recipents)
+        .catchError((onError) {
+      print(onError);
+    });
+    print(_result);
   }
 
   void _submitRegistrationForm() {
